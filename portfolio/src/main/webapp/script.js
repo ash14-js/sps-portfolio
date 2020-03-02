@@ -31,3 +31,22 @@ function getRandomMessageUsingArrowFunctions() {
     document.getElementById('data-container').innerText = data;
   });
 }
+function getjson() {
+  fetch('/data').then(response => response.json()).then((data) => {
+    console.log(data);
+    const dataElement = document.getElementById('data-container');
+    dataElement.innerText = '';
+    dataElement.appendChild(
+        createListElement('First item: ' + data[0]));
+    dataElement.appendChild(
+        createListElement('Second item: ' + data[1]));
+    dataElement.appendChild(
+        createListElement('Third item: ' + data[2]));
+  });
+}
+/** Creates an <li> element containing text. */
+function createListElement(text) {
+  const liElement = document.createElement('li');
+  liElement.innerText = text;
+  return liElement;
+}
