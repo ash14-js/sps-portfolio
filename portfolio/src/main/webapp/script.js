@@ -38,7 +38,7 @@ function getjson() {
     dataElement.innerText = '';
 
     for (var i =0; i < data.length; i++){
-        dataElement.appendChild(createListElement('Comment ' + [i+1] +' : '+ data[i]));
+        dataElement.appendChild(createListElement('Comment ' + [i+1] +' : '+ data[i].text));
         console.log(data[i]);
     }
   });
