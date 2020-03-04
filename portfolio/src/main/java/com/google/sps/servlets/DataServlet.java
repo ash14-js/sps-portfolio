@@ -14,7 +14,15 @@
 
 package com.google.sps.servlets;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.sps.servlets.DataServlet;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
+import com.google.sps.data.Task;
 import java.util.*; 
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
@@ -26,20 +34,39 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-static ArrayList<String> myarraylist = new ArrayList<String>(); 
+//static ArrayList<String> myarraylist = new ArrayList<String>(); 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
+   Query query = new Query("Task").addSort("text", SortDirection.DESCENDING);
+   DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();    
+
+   PreparedQuery results = datastore.prepare(query);
+   
+   List<Task> task = new ArrayList<>();
+   for (Entity entity : results.asIterable()) {
+      long id = entity.getKey().getId();
+      String text = (String) entity.getProperty("text");
+
+      Task task2 = new Task(id, text);
+      task.add(task2);
+    }
+
     Gson gson = new Gson();
-    String json = gson.toJson(myarraylist);
     response.setContentType("application/json");
-    response.getWriter().println(json);
+    response.getWriter().println(gson.toJson(task));
  }
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get the input from the form.
     String text = getParameter(request, "text-input", "");
     
-    myarraylist.add(text);
+    //myarraylist.add(text);
+
+    Entity taskEntity = new Entity("Task");
+    taskEntity.setProperty("text", text);
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(taskEntity);
 
     response.sendRedirect("/index.html");
   }
