@@ -13,7 +13,9 @@
 // limitations under the License.
 
 package com.google.sps.servlets;
-
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
 import com.google.gson.Gson;
 import java.util.*; 
 import java.io.IOException;
@@ -40,6 +42,12 @@ static ArrayList<String> myarraylist = new ArrayList<String>();
     String text = getParameter(request, "text-input", "");
     
     myarraylist.add(text);
+
+    Entity taskEntity = new Entity("Task");
+    taskEntity.setProperty("text", text);
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(taskEntity);
 
     response.sendRedirect("/index.html");
   }
