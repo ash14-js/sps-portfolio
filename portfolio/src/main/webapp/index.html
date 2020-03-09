@@ -9,6 +9,9 @@
   <body onload="getjson()">
     <div id="content">
       <h1>Welcome to Alec's portfolio!</h1>
+      <p>Click here to login:</p>
+      <button onclick="getLoginStatus()">Login</button>
+      <div id="greeting-container"></div>
       <p>This is my portfolio! I'm currently a sophomore at NYU and doing a joint major in Computer Science and Economics.</p>
       <p> I was born in Switzerland and am also Colombian and American. I'm a big fan of sports (soccer, NFL, NBA, MLB, NHL) and am also growing my interest in cooking and baking.</p>
       <p> I love memes so don't be suprised to see a lot of memes here.</p>
@@ -38,7 +41,7 @@
    
     <h2>Comment Section</h2>
 
-      <div id="data-container"></div>
+       <div id="data-container"></div>
 
        <form action="/data" method="POST">
 

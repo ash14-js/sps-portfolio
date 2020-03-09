@@ -42,6 +42,13 @@ function getjson() {
         console.log(data[i].text);
     }
   });
+
+function getLoginStatus() {
+  fetch('/loginstatus').then(response => response.text()).then((loginstatus) => {
+    document.getElementById('loginstatus-container').innerText = loginstatus;
+  });
+}
+
 }
 
 /** Creates an <li> element containing text. */
