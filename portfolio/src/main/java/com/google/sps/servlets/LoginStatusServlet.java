@@ -21,6 +21,8 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.gson.Gson;
+import java.util.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.annotation.WebServlet;
@@ -32,28 +34,52 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/loginstatus")
 public class LoginStatusServlet extends HttpServlet {
 
+  // abstract class
+  private final class LoginStatus {
+      String email;
+      String redirectUrl;
+
+    public LoginStatus(String email, String redirectUrl) {
+    this.email = email;
+    this.redirectUrl = redirectUrl;
+  }
+
+  }
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("text/html");
-    
+    response.setContentType("application/json");
+    // {"email": .., "url": ...}
 
     UserService userService = UserServiceFactory.getUserService();
     if (userService.isUserLoggedIn()) {
       String userEmail = userService.getCurrentUser().getEmail();
       String urlToRedirectToAfterUserLogsOut = "/";
       String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
+      // make instance of login class and set email and url
 
-      response.getWriter().println("<p>Hello " + userEmail + "!</p>");
-      response.getWriter().println("<p>Logout <a href=\"" + logoutUrl + "\">here</a>.</p>");
+      LoginStatus lgs = new LoginStatus(userEmail, logoutUrl);
+      Gson gson = new Gson();
+      String json = gson.toJson(lgs); 
+      response.getWriter().println(json);
+      //response.setContentType("application/json"); 
+      //response.getWriter().println("<p>Hello " + userEmail + "!</p>");
+      //response.getWriter().println("<p>Logout <a href=\"" + logoutUrl + "\">here</a>.</p>");
     } else {
       
       
       String urlToRedirectToAfterUserLogsIn = "/";
       String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
-
-      response.getWriter().println("<p>Hello stranger.</p>");
-      response.getWriter().println("<p>Login <a href=\"" + loginUrl + "\">here</a>.</p>");
+      LoginStatus lgs = new LoginStatus("", loginUrl);
+      Gson gson = new Gson();
+      String json = gson.toJson(lgs); 
+      response.getWriter().println(json);
+      
+      //response.sendRedirect("/loginstatus");
+      //response.getWriter().println("<p>Hello stranger.</p>");
+      //response.getWriter().println("<p>Login <a href=\"" + loginUrl + "\">here</a>.</p>");
     }
 
   }
+
+
 }

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 /**
  * Adds a random greeting to the page.
  */
@@ -32,23 +33,46 @@ function getRandomMessageUsingArrowFunctions() {
   });
 }
 function getjson() {
-  fetch('/data').then(response => response.json()).then((data) => {
-    
-    const dataElement = document.getElementById('data-container');
-    dataElement.innerText = '';
-
-    for (var i =0; i < data.length; i++){
-        dataElement.appendChild(createListElement('Comment ' + [i+1] +' : '+ data[i].text));
-        console.log(data[i].text);
-    }
-  });
-
-function getLoginStatus() {
-  fetch('/loginstatus').then(response => response.text()).then((loginstatus) => {
-    document.getElementById('loginstatus-container').innerText = loginstatus;
-  });
+    console.log("test");
+    fetch('/loginstatus').then(response => response.json()).then((loginstatus) => {
+        const email = loginstatus.email;
+        const redirectUrl = loginstatus.redirectUrl;
+        const dataElement = document.getElementById('data-container');
+        // if not logged in
+        if(email == ""){
+            dataElement.innerText = "Log in to see comments!";
+            console.log("test1");
+        }
+        else {
+            fetch('/data').then(response => response.json()).then((data) => {    
+                dataElement.innerText = '';
+                for (var i =0; i < data.length; i++){
+                    dataElement.appendChild(createListElement(data[i].email + [i+1] +' : '+ data[i].text));
+                    console.log(data[i].text);
+                }     
+            }); 
+        }
+    });   
 }
 
+
+function getLoginStatus() {
+    fetch('/loginstatus').then(response => response.json()).then((loginstatus) => {
+        const email = loginstatus.email;
+        const redirectUrl = loginstatus.redirectUrl;
+        const loginstatusLink = document.getElementById('loginstatuslink');
+        loginstatusLink.href = redirectUrl;
+        const loginstatusMsg = document.getElementById('loginstatus-container');
+        if (email == ""){
+            loginstatusLink.innerText = "Login here";
+            loginstatusMsg.innerText = "******Login to be able to comment******";
+        }
+        else{
+            loginstatusLink.innerText = "Logout here";
+            loginstatusMsg.innerText = "Hello " + email + " you are now logged in!";      
+        }
+
+    });
 }
 
 /** Creates an <li> element containing text. */
