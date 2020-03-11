@@ -62,6 +62,8 @@ public class DataServlet extends HttpServlet {
     // Get the input from the form.
     String text = getParameter(request, "text-input", "");
     
+    
+
     //myarraylist.add(text);
 
     UserService userService = UserServiceFactory.getUserService();
@@ -70,7 +72,7 @@ public class DataServlet extends HttpServlet {
     taskEntity.setProperty("text", text);
     taskEntity.setProperty("email", email);
     
-
+    System.out.println(taskEntity);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(taskEntity);
 

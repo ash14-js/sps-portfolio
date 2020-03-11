@@ -38,6 +38,8 @@ function getjson() {
         const email = loginstatus.email;
         const redirectUrl = loginstatus.redirectUrl;
         const dataElement = document.getElementById('data-container');
+
+
         // if not logged in
         if(email == ""){
             dataElement.innerText = "Log in to see comments!";
@@ -47,9 +49,32 @@ function getjson() {
             fetch('/data').then(response => response.json()).then((data) => {    
                 dataElement.innerText = '';
                 for (var i =0; i < data.length; i++){
-                    dataElement.appendChild(createListElement(data[i].email + [i+1] +' : '+ data[i].text));
+                    if (data[i].text != ""){
+                    dataElement.appendChild(createListElement(data[i].email + ' : '+ data[i].text));
                     console.log(data[i].text);
-                }     
+                    }
+                }
+
+                const createform = document.createElement('form');
+                createform.setAttribute("action", "/data");
+                createform.setAttribute("method", "POST");
+    
+
+                const textarea = document.createElement("textarea");
+                const msg = document.createTextNode("Add a comment here");
+                textarea.appendChild(msg);
+                textarea.name = "text-input";
+                createform.appendChild(textarea);
+
+
+
+                const submitelement = document.createElement('input'); // Append Submit Button
+                submitelement.setAttribute("type", "submit");
+                // submitelement.setAttribute("name", "dsubmit");
+               //  submitelement.setAttribute("value", "Submit");
+                createform.appendChild(submitelement);
+                dataElement.appendChild(createform);
+                
             }); 
         }
     });   
