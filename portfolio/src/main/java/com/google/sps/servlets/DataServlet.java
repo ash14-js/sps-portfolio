@@ -21,6 +21,8 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import com.google.sps.data.Task;
 import java.util.*; 
@@ -47,8 +49,8 @@ public class DataServlet extends HttpServlet {
    for (Entity entity : results.asIterable()) {
       long id = entity.getKey().getId();
       String text = (String) entity.getProperty("text");
-
-      Task task2 = new Task(id, text);
+      String email = (String) entity.getProperty("email");
+      Task task2 = new Task(id, text, email);
       task.add(task2);
     }
 
@@ -60,11 +62,17 @@ public class DataServlet extends HttpServlet {
     // Get the input from the form.
     String text = getParameter(request, "text-input", "");
     
+    
+
     //myarraylist.add(text);
 
+    UserService userService = UserServiceFactory.getUserService();
+    String email = userService.getCurrentUser().getEmail();
     Entity taskEntity = new Entity("Task");
     taskEntity.setProperty("text", text);
-
+    taskEntity.setProperty("email", email);
+    
+    System.out.println(taskEntity);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(taskEntity);
 
